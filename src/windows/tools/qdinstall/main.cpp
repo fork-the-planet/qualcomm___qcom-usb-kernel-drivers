@@ -68,7 +68,7 @@ DWORD install_drivers()
     // Find and install each .inf in current directory
     DWORD ret = ERROR_SUCCESS;
     WIN32_FIND_DATAW fd;
-    std::wstring search_pattern = std::wstring(PATH_INF_DIR) + L".\\*.inf";
+    std::wstring search_pattern = std::wstring(PATH_INF_DIR) + L"*.inf";
     HANDLE hFind = FindFirstFileW(search_pattern.c_str(), &fd);
 
     if (hFind == INVALID_HANDLE_VALUE)
@@ -286,17 +286,17 @@ int wmain(int argc, wchar_t *argv[])
     }
     else if (opts.uninstall)
     {
+        ret = uninstall_drivers();
+        if (ret != ERROR_SUCCESS && ret != ERROR_FILE_NOT_FOUND)
+        {
+            printf("ERROR: failed to uninstall driver (0x%lX)\n", ret);
+            return ret;
+        }
         printf("\nCleaning up registry entries ...\n");
         ret = unregister_installation();
         if (ret != ERROR_SUCCESS)
         {
             printf("WARNING: failed to clean up registry (0x%lX), continuing...\n", ret);
-        }
-        ret = uninstall_drivers();
-        if (ret != ERROR_SUCCESS)
-        {
-            printf("ERROR: failed to uninstall driver (0x%lX)\n", ret);
-            return ret;
         }
     }
 
