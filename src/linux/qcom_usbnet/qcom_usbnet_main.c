@@ -2481,7 +2481,7 @@ static ssize_t debug_show(struct kobject *kobj,
                qmi_sys = (qmi_sys<<8) + logLvl;   
             }
         }
-        return snprintf(buf, PAGE_SIZE, "%04x\n", qmi_sys);
+        return scnprintf(buf, PAGE_SIZE, "%04x\n", qmi_sys);
 }
 
 static ssize_t debug_store(struct kobject *kobj, 
@@ -2576,7 +2576,7 @@ static ssize_t gobiQMITimer_show(struct kobject *kobj,
       #ifdef TX_AGGR
          ctx = &pDevOnRecord->tx_aggr_ctx;
          if (ctx->timer_interval)
-            return snprintf(buf, PAGE_SIZE, "%llu\n", ctx->timer_interval / (u32)NSEC_PER_MSEC);
+            return scnprintf(buf, PAGE_SIZE, "%llu\n", ctx->timer_interval / (u32)NSEC_PER_MSEC);
       #endif
       }
    }
@@ -3129,7 +3129,7 @@ static ssize_t GobiUSBprocRead(struct file *file, char __user *ubuf,size_t count
     if(*ppos > 0 || count < BUFSIZE)
         return 0;
 
-    len += snprintf(buf, BUFSIZE, "%d %ld ms\n", debug_g, gtimer/NSEC_PER_USEC);
+    len += scnprintf(buf, BUFSIZE, "%d %ld ms\n", debug_g, gtimer/NSEC_PER_USEC);
 
     if(copy_to_user(ubuf,buf,len))
         return -EFAULT;
