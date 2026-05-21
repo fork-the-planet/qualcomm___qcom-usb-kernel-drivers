@@ -1603,7 +1603,8 @@ NTSTATUS QCPNP_EvtDevicePrepareHardware
             usbInterfaceDesc.bInterfaceClass    << 8  |
             usbInterfaceDesc.bAlternateSetting  << 16 |
             usbInterfaceDesc.bInterfaceNumber   << 24;
-        pDevContext->InterfaceIndex = usbInterfaceDesc.bInterfaceNumber;
+        pDevContext->InterfaceIndex    = usbInterfaceDesc.bInterfaceNumber;
+        pDevContext->InterfaceProtocol = usbInterfaceDesc.bInterfaceProtocol;
         status = QCMAIN_SetDriverRegistryDword(VEN_DEV_PROTOC, ifProtocol, pDevContext);
 
         QCPNP_SetFunctionProtocol(pDevContext, ifProtocol);
@@ -1612,7 +1613,7 @@ NTSTATUS QCPNP_EvtDevicePrepareHardware
         (
             QCSER_DBG_MASK_READ,
             QCSER_DBG_LEVEL_DETAIL,
-            ("<%ws> QCPNP_EvtDevicePrepareHardware set interface protocol: %lu, status: 0x%x\n", pDevContext->PortName, ifProtocol, status)
+            ("<%ws> QCPNP_EvtDevicePrepareHardware set interface protocol: 0x%x, status: 0x%x\n", pDevContext->PortName, usbInterfaceDesc.bInterfaceProtocol, status)
         );
     } // End update registry settings
 
@@ -1671,6 +1672,21 @@ NTSTATUS QCPNP_EvtDevicePrepareHardware
             ("<%ws> QCPNP_EvtDevicePrepareHardware io threads setup FAILED status: 0x%x\n", pDevContext->PortName, status)
         );
         goto exit;
+    }
+
+    // For SAHARA or FIREHOSE devices, selective suspend is disabled by default
+    if (IS_DEV_PROTOCOL_SAHARA(pDevContext->InterfaceProtocol) ||
+        IS_DEV_PROTOCOL_FIREHOSE(pDevContext->InterfaceProtocol) ||
+        (pDevContext->DeviceFunction == QCUSB_DEV_FUNC_LPC))
+    {
+        QCSER_DbgPrint
+        (
+            QCSER_DBG_MASK_POWER,
+            QCSER_DBG_LEVEL_TRACE,
+            ("<%ws> QCPNP_EvtDevicePrepareHardware selective suspend disabled for SAHARA/FIREHOSE and LPC devices\n",
+             pDevContext->PortName)
+        );
+        pDevContext->PowerManagementEnabled = FALSE;
     }
 
     // Setup usb selective suspend
@@ -2071,64 +2087,46 @@ NTSTATUS QCPNP_EnableSelectiveSuspend
         ("<%ws> QCPNP_EnableSelectiveSuspend\n", pDevContext->PortName)
     );
 
-#ifdef QCUSB_MUX_PROTOCOL
-    if (pDevContext->DeviceFunction == QCUSB_DEV_FUNC_LPC)
+    idleSettings.IdleTimeout = pDevContext->SelectiveSuspendIdleTime;
+#ifdef POFX_SUPPORT
+    idleSettings.IdleTimeoutType = SystemManagedIdleTimeoutWithHint;
+#endif
+    if (idleSettings.IdleTimeout == 0)
     {
-        QCSER_DbgPrint
-        (
-            QCSER_DBG_MASK_POWER,
-            QCSER_DBG_LEVEL_TRACE,
-            ("<%ws> QCPNP_EnableSelectiveSuspend LPC deivce found, selective suspend disabled\n", pDevContext->PortName)
-        );
-
-        // prevent sending further control packets
+        // registry not set, ss is disabled
         idleSettings.Enabled = WdfFalse;
         idleSettings.IdleCaps = IdleCannotWakeFromS0;
+        idleSettings.UserControlOfIdleSettings = IdleDoNotAllowUserControl;
         status = WdfDeviceAssignS0IdleSettings(Device, &idleSettings);
     }
     else
-#endif
     {
         idleSettings.UserControlOfIdleSettings = IdleAllowUserControl;
-        idleSettings.IdleTimeout = pDevContext->SelectiveSuspendIdleTime;
-#ifdef POFX_SUPPORT
-        idleSettings.IdleTimeoutType = SystemManagedIdleTimeoutWithHint;
-#endif
-        if (idleSettings.IdleTimeout == 0)
+        if (pDevContext->SelectiveSuspendInMiliSeconds == FALSE)
         {
-            // registry not set, ss is disabled
-            idleSettings.Enabled = WdfFalse;
+            idleSettings.IdleTimeout *= 1000;
+        }
+        idleSettings.Enabled = pDevContext->PowerManagementEnabled ? WdfTrue : WdfFalse;
+        status = WdfDeviceAssignS0IdleSettings(Device, &idleSettings);
+        if (status == STATUS_POWER_STATE_INVALID)
+        {
+            // bus driver reports the device cannot wakeup itself
+            QCSER_DbgPrint
+            (
+                QCSER_DBG_MASK_POWER,
+                QCSER_DBG_LEVEL_TRACE,
+                ("<%ws> QCPNP_EnableSelectiveSuspend device reported cannot wake from idle\n", pDevContext->PortName)
+            );
             idleSettings.IdleCaps = IdleCannotWakeFromS0;
             status = WdfDeviceAssignS0IdleSettings(Device, &idleSettings);
         }
-        else
-        {
-            if (pDevContext->SelectiveSuspendInMiliSeconds == FALSE)
-            {
-                idleSettings.IdleTimeout *= 1000;
-            }
-            idleSettings.Enabled = WdfTrue;  // explicitly enable SS (overrides any user/registry disable)
-            status = WdfDeviceAssignS0IdleSettings(Device, &idleSettings);
-            if (status == STATUS_POWER_STATE_INVALID)
-            {
-                // bus driver reports the device cannot wakeup itself
-                QCSER_DbgPrint
-                (
-                    QCSER_DBG_MASK_POWER,
-                    QCSER_DBG_LEVEL_TRACE,
-                    ("<%ws> QCPNP_EnableSelectiveSuspend device reported cannot wake from idle\n", pDevContext->PortName)
-                );
-                idleSettings.IdleCaps = IdleCannotWakeFromS0;
-                status = WdfDeviceAssignS0IdleSettings(Device, &idleSettings);
-            }
-        }
-        QCSER_DbgPrint
-        (
-            QCSER_DBG_MASK_POWER,
-            QCSER_DBG_LEVEL_DETAIL,
-            ("<%ws> QCPNP_EnableSelectiveSuspend timeout: %lu, status: 0x%x\n", pDevContext->PortName, idleSettings.IdleTimeout, status)
-        );
     }
+    QCSER_DbgPrint
+    (
+        QCSER_DBG_MASK_POWER,
+        QCSER_DBG_LEVEL_DETAIL,
+        ("<%ws> QCPNP_EnableSelectiveSuspend timeout: %lu, status: 0x%x\n", pDevContext->PortName, idleSettings.IdleTimeout, status)
+    );
 
     pDevContext->AssignedIdleCaps = idleSettings.IdleCaps;
 

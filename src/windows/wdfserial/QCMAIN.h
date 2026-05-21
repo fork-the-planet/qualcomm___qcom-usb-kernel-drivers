@@ -237,6 +237,7 @@ typedef struct _DEVICE_CONTEXT
     ULONG                     DebugLevel;
     UCHAR                     UsbDeviceType;
     USHORT                    InterfaceIndex;
+    UCHAR                     InterfaceProtocol;
     DEVICE_TYPE               FdoDeviceType;
 
     KEVENT                    TimeoutEvent;
@@ -359,6 +360,20 @@ WDF_DECLARE_CONTEXT_TYPE_WITH_NAME(REQUEST_CONTEXT, QCReqGetContext)
 #define QCUSB_DEV_FUNC_LPC       0x03
 #define QCUSB_DEV_FUNC_VI        0x04
 #define QCUSB_DEV_FUNC_UNDEF     0xFFFFFFFF
+
+// USB interface bInterfaceProtocol values used by Qualcomm devices.
+#define DEV_PROTOCOL_UNKNOWN     0x00
+#define DEV_PROTOCOL_SAHARA      0x10
+#define DEV_PROTOCOL_FIREHOSE    0x20
+#define DEV_PROTOCOL_DIAG        0x30
+#define DEV_PROTOCOL_DUN         0x40
+
+// Helpers that classify a bInterfaceProtocol value by its high-nibble protocol family.
+#define DEV_PROTOCOL_GROUP(p)        ((UCHAR)((p) & 0xF0))
+#define IS_DEV_PROTOCOL_SAHARA(p)    (DEV_PROTOCOL_GROUP(p) == DEV_PROTOCOL_SAHARA)
+#define IS_DEV_PROTOCOL_FIREHOSE(p)  (DEV_PROTOCOL_GROUP(p) == DEV_PROTOCOL_FIREHOSE)
+#define IS_DEV_PROTOCOL_DIAG(p)      (DEV_PROTOCOL_GROUP(p) == DEV_PROTOCOL_DIAG)
+#define IS_DEV_PROTOCOL_DUN(p)       (DEV_PROTOCOL_GROUP(p) == DEV_PROTOCOL_DUN)
 
 // Debug levels
 #define QCSER_DBG_LEVEL_FORCE    0x0
