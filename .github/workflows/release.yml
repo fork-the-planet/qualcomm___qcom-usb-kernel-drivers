@@ -166,11 +166,41 @@ jobs:
           sudo apt-get install -y --no-install-recommends dpkg-dev
 
       - name: Build deb package
+        id: build
         run: |
           cd src/linux
-          bash build-deb.sh
+          set -o pipefail
+          bash build-deb.sh 2>&1 | tee /tmp/build.log
           echo "Build output:"
           ls -lh build/
+
+      - name: Job summary
+        if: always()
+        env:
+          VERSION: ${{ inputs.linux_version }}
+          BRANCH: ${{ steps.branch.outputs.branch }}
+          BUILD_RESULT: ${{ steps.build.outcome }}
+        run: |
+          {
+            echo "## Linux Release Summary — v${VERSION}"
+            echo ""
+            echo "| Step | Result |"
+            echo "|------|--------|"
+            echo "| Release branch | \`${BRANCH}\` |"
+            if [ "$BUILD_RESULT" = "success" ]; then
+              echo "| Build .deb | ✅ Success |"
+            else
+              echo "| Build .deb | ❌ **Failed** |"
+              echo ""
+              echo "### Build log"
+              echo "\`\`\`"
+              tail -50 /tmp/build.log 2>/dev/null || echo "(no log captured)"
+              echo "\`\`\`"
+              echo ""
+              echo "> **Action required:** Fix the build error, then re-run the workflow."
+              echo "> The release branch \`${BRANCH}\` has been pushed — delete it before re-running."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
 
       # ── 5. Package release artifact ───────────────────────────────────────
       - name: Create release zip
@@ -239,17 +269,17 @@ jobs:
           if [ -z "$NOTES" ]; then
             NOTES="## Linux driver release v${VERSION}
 
-Built from branch \`${BRANCH}\`.
+          Built from branch \`${BRANCH}\`.
 
-### Installation
-\`\`\`bash
-sudo dpkg -i qud_${VERSION}_all.deb
-\`\`\`
+          ### Installation
+          \`\`\`bash
+          sudo dpkg -i qud_${VERSION}_all.deb
+          \`\`\`
 
-### Uninstall
-\`\`\`bash
-sudo dpkg -r qud
-\`\`\`"
+          ### Uninstall
+          \`\`\`bash
+          sudo dpkg -r qud
+          \`\`\`"
           fi
 
           DRAFT_FLAG=""
@@ -389,12 +419,12 @@ sudo dpkg -r qud
           if [ -z "$NOTES" ]; then
             NOTES="## Windows driver release v${VERSION}
 
-Built from branch \`${BRANCH}\`.
+          Built from branch \`${BRANCH}\`.
 
-> **Note:** Attach the signed build artifacts produced by the internal
-> Windows build pipeline before publishing this release.
->
-> Build locally with: \`.\build\build_drivers.ps1\` (requires Visual Studio + WDK)"
+          > **Note:** Attach the signed build artifacts produced by the internal
+          > Windows build pipeline before publishing this release.
+          >
+          > Build locally with: \`.\build\build_drivers.ps1\` (requires Visual Studio + WDK)"
           fi
 
           # Windows releases always start as draft because signed artifacts
