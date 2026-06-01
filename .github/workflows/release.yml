@@ -56,6 +56,26 @@ jobs:
       do_linux: ${{ steps.check.outputs.do_linux }}
       do_windows: ${{ steps.check.outputs.do_windows }}
     steps:
+      - name: Check actor is a maintainer
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ACTOR: ${{ github.actor }}
+          REPO: ${{ github.repository }}
+        run: |
+          PERMISSION=$(gh api "repos/${REPO}/collaborators/${ACTOR}/permission" \
+            --jq '.permission' 2>/dev/null || echo "none")
+          echo "Actor '${ACTOR}' permission: ${PERMISSION}"
+          case "$PERMISSION" in
+            admin|maintain|write)
+              echo "✅ Authorized — proceeding with release."
+              ;;
+            *)
+              echo "ERROR: Only maintainers (write/maintain/admin) may trigger this workflow."
+              echo "Actor '${ACTOR}' has permission '${PERMISSION}'."
+              exit 1
+              ;;
+          esac
+
       - name: Check that at least one version was supplied
         id: check
         env:
