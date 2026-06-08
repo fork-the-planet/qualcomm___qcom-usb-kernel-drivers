@@ -34,7 +34,6 @@
     <Configuration>Debug</Configuration>
     <Platform Condition="'$(Platform)' == ''">Win32</Platform>
     <RootNamespace>qcfilter</RootNamespace>
-    <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -133,6 +132,9 @@
     <ResourceCompile>
       <AdditionalIncludeDirectories>$(UM_IncludePath);%(AdditionalIncludeDirectories);..\</AdditionalIncludeDirectories>
     </ResourceCompile>
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -149,6 +151,9 @@
     <ResourceCompile>
       <AdditionalIncludeDirectories>$(UM_IncludePath);%(AdditionalIncludeDirectories);..\</AdditionalIncludeDirectories>
     </ResourceCompile>
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -164,6 +169,9 @@
     <ResourceCompile>
       <AdditionalIncludeDirectories>$(UM_IncludePath);%(AdditionalIncludeDirectories);..\</AdditionalIncludeDirectories>
     </ResourceCompile>
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -179,6 +187,9 @@
     <ResourceCompile>
       <AdditionalIncludeDirectories>$(UM_IncludePath);%(AdditionalIncludeDirectories);..\</AdditionalIncludeDirectories>
     </ResourceCompile>
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
     <ClCompile>

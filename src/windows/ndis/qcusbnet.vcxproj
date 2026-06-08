@@ -141,6 +141,9 @@
     <ResourceCompile>
       <AdditionalIncludeDirectories>$(UM_IncludePath);%(AdditionalIncludeDirectories);..\</AdditionalIncludeDirectories>
     </ResourceCompile>
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
     <ClCompile>
@@ -175,6 +178,9 @@
     <ResourceCompile>
       <AdditionalIncludeDirectories>$(UM_IncludePath);%(AdditionalIncludeDirectories);..\</AdditionalIncludeDirectories>
     </ResourceCompile>
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -192,6 +198,9 @@
     <ResourceCompile>
       <AdditionalIncludeDirectories>$(UM_IncludePath);%(AdditionalIncludeDirectories);..\</AdditionalIncludeDirectories>
     </ResourceCompile>
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
     <ClCompile>
@@ -226,10 +235,13 @@
     <ResourceCompile>
       <AdditionalIncludeDirectories>$(UM_IncludePath);%(AdditionalIncludeDirectories);..\</AdditionalIncludeDirectories>
     </ResourceCompile>
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
   </ItemDefinitionGroup>
   <ItemGroup>
     <FilesToPackage Include="$(TargetPath)" />
-	<FilesToPackage Include="$(OutDir)$(TargetName).pdb" />
+    <FilesToPackage Include="$(OutDir)$(TargetName).pdb" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\transport\usb\USBCTL.c" />

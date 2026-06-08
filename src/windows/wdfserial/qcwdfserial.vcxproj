@@ -133,6 +133,9 @@
     <ResourceCompile>
       <AdditionalIncludeDirectories>$(UM_IncludePath);%(AdditionalIncludeDirectories);..\</AdditionalIncludeDirectories>
     </ResourceCompile>
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -144,6 +147,9 @@
     <ResourceCompile>
       <AdditionalIncludeDirectories>$(UM_IncludePath);%(AdditionalIncludeDirectories);..\</AdditionalIncludeDirectories>
     </ResourceCompile>
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -155,6 +161,9 @@
     <ResourceCompile>
       <AdditionalIncludeDirectories>$(UM_IncludePath);%(AdditionalIncludeDirectories);..\</AdditionalIncludeDirectories>
     </ResourceCompile>
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -166,6 +175,9 @@
     <ResourceCompile>
       <AdditionalIncludeDirectories>$(UM_IncludePath);%(AdditionalIncludeDirectories);..\</AdditionalIncludeDirectories>
     </ResourceCompile>
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
     <ClCompile>
