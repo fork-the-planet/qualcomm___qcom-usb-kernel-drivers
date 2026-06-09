@@ -29,7 +29,6 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{AAC5BB08-77C0-4626-A944-7FB0ADC3E4F1}</ProjectGuid>
     <TemplateGuid>{dd38f7fc-d7bd-488b-9242-7d8754cde80d}</TemplateGuid>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
     <Configuration>Debug</Configuration>
     <Platform Condition="'$(Platform)' == ''">Win32</Platform>
@@ -42,16 +41,13 @@
     <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
     <ConfigurationType>Driver</ConfigurationType>
     <DriverType>WDM</DriverType>
-    <DriverTargetPlatform>Desktop</DriverTargetPlatform>
     <Driver_SpectreMitigation>false</Driver_SpectreMitigation>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <TargetVersion>Windows10</TargetVersion>
-    <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
     <ConfigurationType>Driver</ConfigurationType>
     <DriverType>WDM</DriverType>
-    <DriverTargetPlatform>Desktop</DriverTargetPlatform>
     <Driver_SpectreMitigation>false</Driver_SpectreMitigation>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -60,16 +56,13 @@
     <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
     <ConfigurationType>Driver</ConfigurationType>
     <DriverType>WDM</DriverType>
-    <DriverTargetPlatform>Desktop</DriverTargetPlatform>
     <Driver_SpectreMitigation>false</Driver_SpectreMitigation>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <TargetVersion>Windows10</TargetVersion>
-    <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
     <ConfigurationType>Driver</ConfigurationType>
     <DriverType>WDM</DriverType>
-    <DriverTargetPlatform>Desktop</DriverTargetPlatform>
     <Driver_SpectreMitigation>false</Driver_SpectreMitigation>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'" Label="Configuration">
@@ -77,25 +70,20 @@
     <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
     <ConfigurationType>Driver</ConfigurationType>
     <DriverType>WDM</DriverType>
-    <DriverTargetPlatform>Desktop</DriverTargetPlatform>
     <Driver_SpectreMitigation>false</Driver_SpectreMitigation>
+    <TargetVersion>Windows10</TargetVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'" Label="Configuration">
-    <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
     <ConfigurationType>Driver</ConfigurationType>
     <DriverType>WDM</DriverType>
-    <DriverTargetPlatform>Desktop</DriverTargetPlatform>
     <Driver_SpectreMitigation>false</Driver_SpectreMitigation>
+    <TargetVersion>Windows10</TargetVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-  <ImportGroup Label="ExtensionSettings">
-  </ImportGroup>
   <ImportGroup Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
     <OutDir>$(SolutionDir)$(Platform)\$(ConfigurationName)\</OutDir>
@@ -121,7 +109,6 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level2</WarningLevel>
-      <TreatWarningAsError>false</TreatWarningAsError>
       <PreprocessorDefinitions>_X86_=1;i386=1;STD_CALL;%(PreprocessorDefinitions);QCUSB_SHARE_INTERRUPT;POOL_NX_OPTIN=1;EVENT_TRACING</PreprocessorDefinitions>
       <WppEnabled>true</WppEnabled>
       <WppScanConfigurationData>qcfilterwpp.h</WppScanConfigurationData>
@@ -138,10 +125,8 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <TreatWarningAsError>false</TreatWarningAsError>
       <PreprocessorDefinitions>_WIN64;_AMD64_;AMD64;%(PreprocessorDefinitions);QCUSB_SHARE_INTERRUPT;POOL_NX_OPTIN=1;EVENT_TRACING</PreprocessorDefinitions>
       <WppEnabled>true</WppEnabled>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level2</WarningLevel>
       <WppScanConfigurationData>qcfilterwpp.h</WppScanConfigurationData>
     </ClCompile>
@@ -157,7 +142,6 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <TreatWarningAsError>false</TreatWarningAsError>
       <PreprocessorDefinitions>_WIN64;_AMD64_;AMD64;%(PreprocessorDefinitions);QCUSB_SHARE_INTERRUPT;POOL_NX_OPTIN=1;EVENT_TRACING</PreprocessorDefinitions>
       <WppEnabled>true</WppEnabled>
       <WarningLevel>Level2</WarningLevel>
@@ -175,7 +159,6 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <TreatWarningAsError>false</TreatWarningAsError>
       <PreprocessorDefinitions>_X86_=1;i386=1;STD_CALL;%(PreprocessorDefinitions);QCUSB_SHARE_INTERRUPT;POOL_NX_OPTIN=1;EVENT_TRACING</PreprocessorDefinitions>
       <WppEnabled>true</WppEnabled>
       <WarningLevel>Level2</WarningLevel>
@@ -198,7 +181,6 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
     <ClCompile>
-      <TreatWarningAsError>false</TreatWarningAsError>
       <WppScanConfigurationData>qcfilterwpp.h</WppScanConfigurationData>
       <PreprocessorDefinitions>_ARM64_;ARM64;_USE_DECLSPECS_FOR_SAL=1;STD_CALL;%(PreprocessorDefinitions);QCUSB_SHARE_INTERRUPT;POOL_NX_OPTIN=1;EVENT_TRACING</PreprocessorDefinitions>
       <WppEnabled>true</WppEnabled>
@@ -217,7 +199,6 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
     <ClCompile>
-      <TreatWarningAsError>false</TreatWarningAsError>
       <WppScanConfigurationData>qcfilterwpp.h</WppScanConfigurationData>
       <WppEnabled>true</WppEnabled>
       <PreprocessorDefinitions>_ARM64_;ARM64;_USE_DECLSPECS_FOR_SAL=1;STD_CALL;%(PreprocessorDefinitions);QCUSB_SHARE_INTERRUPT;POOL_NX_OPTIN=1;EVENT_TRACING</PreprocessorDefinitions>

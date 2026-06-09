@@ -29,12 +29,10 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{A4901F04-A502-407B-A405-A7C3E1B69733}</ProjectGuid>
     <TemplateGuid>{1bc93793-694f-48fe-9372-81e2b05556fd}</TemplateGuid>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
     <Configuration>Debug</Configuration>
     <Platform Condition="'$(Platform)' == ''">Win32</Platform>
     <RootNamespace>qdbusb</RootNamespace>
-    <WindowsTargetPlatformVersion>$(LatestTargetPlatformVersion)</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -42,56 +40,50 @@
     <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
     <ConfigurationType>Driver</ConfigurationType>
     <DriverType>KMDF</DriverType>
-    <DriverTargetPlatform>Universal</DriverTargetPlatform>
     <Driver_SpectreMitigation>false</Driver_SpectreMitigation>
+    <TargetVersion>Windows10</TargetVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
     <ConfigurationType>Driver</ConfigurationType>
     <DriverType>KMDF</DriverType>
-    <DriverTargetPlatform>Universal</DriverTargetPlatform>
     <Driver_SpectreMitigation>false</Driver_SpectreMitigation>
+    <TargetVersion>Windows10</TargetVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
     <ConfigurationType>Driver</ConfigurationType>
     <DriverType>KMDF</DriverType>
-    <DriverTargetPlatform>Universal</DriverTargetPlatform>
     <Driver_SpectreMitigation>false</Driver_SpectreMitigation>
+    <TargetVersion>Windows10</TargetVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
     <ConfigurationType>Driver</ConfigurationType>
     <DriverType>KMDF</DriverType>
-    <DriverTargetPlatform>Universal</DriverTargetPlatform>
     <Driver_SpectreMitigation>false</Driver_SpectreMitigation>
+    <TargetVersion>Windows10</TargetVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'" Label="Configuration">
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
     <ConfigurationType>Driver</ConfigurationType>
     <DriverType>KMDF</DriverType>
-    <DriverTargetPlatform>Universal</DriverTargetPlatform>
     <Driver_SpectreMitigation>false</Driver_SpectreMitigation>
+    <TargetVersion>Windows10</TargetVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'" Label="Configuration">
-    <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
     <ConfigurationType>Driver</ConfigurationType>
     <DriverType>KMDF</DriverType>
-    <DriverTargetPlatform>Universal</DriverTargetPlatform>
     <Driver_SpectreMitigation>false</Driver_SpectreMitigation>
+    <TargetVersion>Windows10</TargetVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-  <ImportGroup Label="ExtensionSettings">
-  </ImportGroup>
   <ImportGroup Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
     <OutDir>$(SolutionDir)$(Platform)\$(ConfigurationName)\</OutDir>
@@ -117,7 +109,6 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
     <ClCompile>
       <PreprocessorDefinitions>_ARM64_;ARM64;_USE_DECLSPECS_FOR_SAL=1;STD_CALL;%(PreprocessorDefinitions);EVENT_TRACING;QDB_DBGPRINT;POOL_NX_OPTIN=1</PreprocessorDefinitions>
-      <TreatWarningAsError>false</TreatWarningAsError>
       <WarningLevel>Level2</WarningLevel>
       <WppEnabled>true</WppEnabled>
       <WppScanConfigurationData>QDBWPP.h</WppScanConfigurationData>
@@ -129,7 +120,6 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <PreprocessorDefinitions>_X86_=1;i386=1;STD_CALL;%(PreprocessorDefinitions);EVENT_TRACING;QDB_DBGPRINT;POOL_NX_OPTIN=1</PreprocessorDefinitions>
-      <TreatWarningAsError>false</TreatWarningAsError>
       <WarningLevel>Level2</WarningLevel>
       <WppEnabled>true</WppEnabled>
       <WppScanConfigurationData>QDBWPP.h</WppScanConfigurationData>
@@ -144,7 +134,6 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <PreprocessorDefinitions>_WIN64;_AMD64_;AMD64;%(PreprocessorDefinitions);EVENT_TRACING;QDB_DBGPRINT;POOL_NX_OPTIN=1</PreprocessorDefinitions>
-      <TreatWarningAsError>false</TreatWarningAsError>
       <WarningLevel>Level2</WarningLevel>
       <WppEnabled>true</WppEnabled>
       <WppScanConfigurationData>QDBWPP.h</WppScanConfigurationData>
@@ -159,7 +148,6 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
     <ClCompile>
       <PreprocessorDefinitions>_ARM64_;ARM64;_USE_DECLSPECS_FOR_SAL=1;STD_CALL;%(PreprocessorDefinitions);EVENT_TRACING;QDB_DBGPRINT;POOL_NX_OPTIN=1</PreprocessorDefinitions>
-      <TreatWarningAsError>false</TreatWarningAsError>
       <WarningLevel>Level2</WarningLevel>
       <WppEnabled>true</WppEnabled>
       <WppScanConfigurationData>QDBWPP.h</WppScanConfigurationData>
@@ -171,7 +159,6 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <PreprocessorDefinitions>_X86_=1;i386=1;STD_CALL;%(PreprocessorDefinitions);EVENT_TRACING;QDB_DBGPRINT;POOL_NX_OPTIN=1</PreprocessorDefinitions>
-      <TreatWarningAsError>false</TreatWarningAsError>
       <WarningLevel>Level2</WarningLevel>
       <WppEnabled>true</WppEnabled>
       <WppScanConfigurationData>QDBWPP.h</WppScanConfigurationData>
@@ -186,7 +173,6 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <PreprocessorDefinitions>_WIN64;_AMD64_;AMD64;%(PreprocessorDefinitions);EVENT_TRACING;QDB_DBGPRINT;POOL_NX_OPTIN=1</PreprocessorDefinitions>
-      <TreatWarningAsError>false</TreatWarningAsError>
       <WarningLevel>Level2</WarningLevel>
       <WppEnabled>true</WppEnabled>
       <WppScanConfigurationData>QDBWPP.h</WppScanConfigurationData>

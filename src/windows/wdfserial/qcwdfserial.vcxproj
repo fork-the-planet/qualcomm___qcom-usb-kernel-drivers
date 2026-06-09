@@ -29,7 +29,6 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0AE233C8-4177-4147-ADFB-3C923CE677DC}</ProjectGuid>
     <TemplateGuid>{1bc93793-694f-48fe-9372-81e2b05556fd}</TemplateGuid>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
     <Configuration>Debug</Configuration>
     <Platform Condition="'$(Platform)' == ''">Win32</Platform>
@@ -43,7 +42,6 @@
     <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
     <ConfigurationType>Driver</ConfigurationType>
     <DriverType>KMDF</DriverType>
-    <DriverTargetPlatform>Universal</DriverTargetPlatform>
     <Driver_SpectreMitigation>false</Driver_SpectreMitigation>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -52,7 +50,6 @@
     <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
     <ConfigurationType>Driver</ConfigurationType>
     <DriverType>KMDF</DriverType>
-    <DriverTargetPlatform>Universal</DriverTargetPlatform>
     <Driver_SpectreMitigation>false</Driver_SpectreMitigation>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -61,7 +58,6 @@
     <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
     <ConfigurationType>Driver</ConfigurationType>
     <DriverType>KMDF</DriverType>
-    <DriverTargetPlatform>Universal</DriverTargetPlatform>
     <Driver_SpectreMitigation>false</Driver_SpectreMitigation>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -70,7 +66,6 @@
     <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
     <ConfigurationType>Driver</ConfigurationType>
     <DriverType>KMDF</DriverType>
-    <DriverTargetPlatform>Universal</DriverTargetPlatform>
     <Driver_SpectreMitigation>false</Driver_SpectreMitigation>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'" Label="Configuration">
@@ -79,7 +74,6 @@
     <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
     <ConfigurationType>Driver</ConfigurationType>
     <DriverType>KMDF</DriverType>
-    <DriverTargetPlatform>Universal</DriverTargetPlatform>
     <Driver_SpectreMitigation>false</Driver_SpectreMitigation>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'" Label="Configuration">
@@ -88,17 +82,12 @@
     <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
     <ConfigurationType>Driver</ConfigurationType>
     <DriverType>KMDF</DriverType>
-    <DriverTargetPlatform>Universal</DriverTargetPlatform>
     <Driver_SpectreMitigation>false</Driver_SpectreMitigation>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-  <ImportGroup Label="ExtensionSettings">
-  </ImportGroup>
   <ImportGroup Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
     <OutDir>$(SolutionDir)$(Platform)\$(ConfigurationName)\</OutDir>
@@ -125,8 +114,6 @@
     <ClCompile>
       <WppEnabled>true</WppEnabled>
       <WppScanConfigurationData>QCWPP.h</WppScanConfigurationData>
-      <WppPreprocessorDefinitions>
-      </WppPreprocessorDefinitions>
       <PreprocessorDefinitions>_WIN64;_AMD64_;AMD64;EVENT_TRACING;QCUSB_MUX_PROTOCOL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <WarningLevel>Level2</WarningLevel>
     </ClCompile>
