@@ -158,7 +158,7 @@ jobs:
 
     steps:
       - name: Checkout base branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: ${{ inputs.base_branch }}
           fetch-depth: 0
@@ -378,7 +378,7 @@ jobs:
 
     steps:
       - name: Checkout base branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: ${{ inputs.base_branch }}
           fetch-depth: 0
