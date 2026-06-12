@@ -133,7 +133,7 @@ namespace PayloadInstaller
             "qud.internal"
         };
 
-        static int RunCommand(string fileName, string arguments)
+        static int RunCommand(string fileName, string arguments, bool consoleOutput = true)
         {
             try
             {
@@ -142,6 +142,11 @@ namespace PayloadInstaller
                 if (arguments != null)
                     psi.Arguments = arguments;
                 psi.UseShellExecute = false;
+                if (!consoleOutput)
+                {
+                    psi.RedirectStandardOutput = true;
+                    psi.RedirectStandardError  = true;
+                }
                 Process proc = Process.Start(psi);
                 proc.WaitForExit();
                 return proc.ExitCode;
@@ -160,8 +165,8 @@ namespace PayloadInstaller
             foreach (string pkg in LegacyPackages)
             {
                 Console.WriteLine("\nUninstalling legacy product: " + pkg + "...");
-                RunCommand("qpm-cli", "--uninstall " + pkg + " --silent");
-                RunCommand("qsc-cli", "tool uninstall -n " + pkg);
+                RunCommand("qpm-cli", "--uninstall " + pkg + " --silent", false);
+                RunCommand("qsc-cli", "tool uninstall -n " + pkg, false);
             }
 
             int result = 0;
