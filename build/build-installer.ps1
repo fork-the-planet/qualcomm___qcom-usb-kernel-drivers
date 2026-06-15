@@ -1,5 +1,10 @@
+# Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+# SPDX-License-Identifier: BSD-3-Clause
+
 param(
-    [string]$OutputName = "installer.exe"
+    [string]$OutputName = "installer.exe",
+    [ValidateSet("x64", "x86", "arm64")]
+    [string]$Arch = "x64"   # default value (adjust if needed)
 )
 
 # ==============================================================================
@@ -7,13 +12,19 @@ param(
 # ==============================================================================
 
 $Script:OutputRoot   = Join-Path $PSScriptRoot "target"
-$Script:DriversDir   = "drivers"
-$Script:ToolsDir     = "tools"
 $Script:PayloadName  = "payload.zip"
 $Script:VersionFile  = Join-Path $PSScriptRoot "..\src\windows\qcversion.h"
 
-# Files to promote from tools/ to the payload root (alongside drivers/ and tools/)
-$Script:PromotedTools = @("qdclr.exe", "qdinstall.exe")
+# Items to include in the payload zip (files or directories under target/).
+# Promote: optional list of file names to move to the payload root.
+$Script:PayloadItems = @(
+    @{ Path = "drivers"; Arch = $null; Promote = $null }
+    @{ Path = "tools";   Arch = $null; Promote = @("qdclr.exe", "qdinstall.exe") }
+)
+
+# ==============================================================================
+# Functions
+# ==============================================================================
 
 # Assembles a payload zip from target/drivers and target/tools.
 function New-Payload {
@@ -21,38 +32,46 @@ function New-Payload {
     Write-Host " Packaging Payload"
     Write-Host "========================================`n"
 
-    $driversSource = Join-Path $Script:OutputRoot $Script:DriversDir
-    $toolsSource   = Join-Path $Script:OutputRoot $Script:ToolsDir
-
-    if (-not (Test-Path $driversSource)) {
-        Write-Error "[ERROR] Drivers directory not found: $driversSource"
-        exit 1
-    }
-    if (-not (Test-Path $toolsSource)) {
-        Write-Error "[ERROR] Tools directory not found: $toolsSource"
-        exit 1
-    }
-
     # Create a temp staging directory
     $stagingDir = Join-Path ([System.IO.Path]::GetTempPath()) ([Guid]::NewGuid().ToString("N"))
     New-Item -ItemType Directory -Path $stagingDir -Force | Out-Null
 
     try {
-        # Copy drivers/ and tools/ into the staging root
-        Copy-Item -Path $driversSource -Destination $stagingDir -Recurse -Force
-        Copy-Item -Path $toolsSource   -Destination $stagingDir -Recurse -Force
-        Write-Host "[COPY] $Script:DriversDir, $Script:ToolsDir -> $stagingDir"
+        # Copy all payload items into the staging root.
+        foreach ($item in $Script:PayloadItems) {
+            if ($item.Arch) {
+                $archSource = Join-Path $PSScriptRoot "$($item.Path)\$($item.Arch)"
+                $destDir    = Join-Path $stagingDir $item.Path
+                if (-not (Test-Path $archSource)) {
+                    Write-Warning "[WARNING] $($item.Path) arch folder not found: $archSource"
+                    continue
+                }
+                New-Item -ItemType Directory -Path $destDir -Force | Out-Null
+                Copy-Item -Path $archSource -Destination $destDir -Recurse -Force
+                Write-Host "[COPY] $($item.Path)/$($item.Arch) -> staging"
+                continue
+            }
 
-        # Promote specified tools to staging root and remove from tools/
-        $destTools = Join-Path $stagingDir $Script:ToolsDir
-        foreach ($toolFile in $Script:PromotedTools) {
-            $srcFile = Join-Path $destTools $toolFile
-            if (Test-Path $srcFile) {
-                Copy-Item -Path $srcFile -Destination $stagingDir -Force
-                Remove-Item -Path $srcFile -Force
-                Write-Host "[PROMOTE] $toolFile -> payload root"
+            $src = Join-Path $Script:OutputRoot $item.Path
+            if (Test-Path $src) {
+                Copy-Item -Path $src -Destination $stagingDir -Recurse -Force
+                Write-Host "[COPY] $($item.Path) -> staging"
             } else {
-                Write-Warning "[WARNING] Promoted tool not found in Tools: $toolFile"
+                Write-Warning "[WARNING] Payload item not found: $src"
+                continue
+            }
+
+            if ($item.Promote) {
+                foreach ($fileName in $item.Promote) {
+                    $srcFile = Join-Path (Join-Path $stagingDir $item.Path) $fileName
+                    if (Test-Path $srcFile) {
+                        Copy-Item -Path $srcFile -Destination $stagingDir -Force
+                        Remove-Item -Path $srcFile -Force
+                        Write-Host "[PROMOTE] $($item.Path)/$fileName -> payload root"
+                    } else {
+                        Write-Warning "[WARNING] Promoted file not found: $($item.Path)/$fileName"
+                    }
+                }
             }
         }
 
@@ -85,7 +104,10 @@ function New-Payload {
 $PayloadFullPath = (Resolve-Path (New-Payload)).Path
 
 # --- Parse version ---
-$Version = "1.0.0.0"
+$Version     = "1.0.0.0"
+$ProductName = "Qualcomm USB Kernel Drivers"
+$CompanyName = "Qualcomm Technologies, Inc."
+$Copyright   = "Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries."
 if (Test-Path $Script:VersionFile) {
     $versionContent = Get-Content $Script:VersionFile -Raw
     if ($versionContent -match '#define\s+QCOM_USB_DRIVERS_PRODUCT_VERSION\s+([\d.]+)') {
@@ -93,6 +115,15 @@ if (Test-Path $Script:VersionFile) {
         Write-Host "[INFO] Version from header: $Version"
     } else {
         Write-Warning "QCOM_USB_DRIVERS_PRODUCT_VERSION not found in $($Script:VersionFile), using default: $Version"
+    }
+    if ($versionContent -match '#define\s+QCOM_USB_DRIVERS_PRODUCT_NAME\s+"([^"]+)"') {
+        $ProductName = $Matches[1]
+    }
+    if ($versionContent -match '#define\s+QCOM_USB_DRIVERS_COMPANY_NAME\s+"([^"]+)"') {
+        $CompanyName = $Matches[1]
+    }
+    if ($versionContent -match '#define\s+QCOM_USB_DRIVERS_COPYRIGHT\s+"([^"]+)"') {
+        $Copyright = $Matches[1]
     }
 } else {
     Write-Warning "[WARNING] Version file not found: $($Script:VersionFile), using default: $Version"
@@ -106,11 +137,11 @@ using System.IO;
 using System.IO.Compression;
 using System.Reflection;
 
-[assembly: AssemblyTitle("Qualcomm USB Kernel Driver Installer")]
-[assembly: AssemblyDescription("Qualcomm USB Kernel Driver Installer")]
-[assembly: AssemblyCompany("Qualcomm Technologies, Inc.")]
-[assembly: AssemblyProduct("Qualcomm USB Kernel Drivers")]
-[assembly: AssemblyCopyright("Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.")]
+[assembly: AssemblyTitle("__PRODUCT_NAME__")]
+[assembly: AssemblyDescription("__PRODUCT_NAME__")]
+[assembly: AssemblyCompany("__COMPANY_NAME__")]
+[assembly: AssemblyProduct("__PRODUCT_NAME__")]
+[assembly: AssemblyCopyright("__COPYRIGHT__")]
 [assembly: AssemblyVersion("__VERSION__")]
 [assembly: AssemblyFileVersion("__VERSION__")]
 [assembly: AssemblyInformationalVersion("__VERSION__")]
@@ -133,7 +164,7 @@ namespace PayloadInstaller
             "qud.internal"
         };
 
-        static int RunCommand(string fileName, string arguments)
+        static int RunCommand(string fileName, string arguments, bool consoleOutput = true)
         {
             try
             {
@@ -142,6 +173,11 @@ namespace PayloadInstaller
                 if (arguments != null)
                     psi.Arguments = arguments;
                 psi.UseShellExecute = false;
+                if (!consoleOutput)
+                {
+                    psi.RedirectStandardOutput = true;
+                    psi.RedirectStandardError  = true;
+                }
                 Process proc = Process.Start(psi);
                 proc.WaitForExit();
                 return proc.ExitCode;
@@ -153,22 +189,25 @@ namespace PayloadInstaller
             }
         }
 
-        // Uninstall any previous installation.
-        static int Uninstall()
+        // Removal of legacy drivers installed by QPM/QSC
+        static void UninstallLegacy()
         {
-            // Best-effort cleanup of legacy packages
             foreach (string pkg in LegacyPackages)
             {
                 Console.WriteLine("\nUninstalling legacy product: " + pkg + "...");
-                RunCommand("qpm-cli", "--uninstall " + pkg + " --silent");
-                RunCommand("qsc-cli", "tool uninstall -n " + pkg);
+                RunCommand("qpm-cli", "--uninstall " + pkg + " --silent", false);
+                RunCommand("qsc-cli", "tool uninstall -n " + pkg, false);
             }
+        }
 
+        // Uninstall any previous installation.
+        static int Uninstall()
+        {
             int result = 0;
             if (File.Exists(QdinstallExe))
             {
                 Console.WriteLine("\nRunning uninstaller: " + QdinstallExe);
-                result = RunCommand(QdinstallExe, "-x");
+                result = RunCommand(QdinstallExe, "-u");
             }
 
             if (Directory.Exists(InstallPath))
@@ -194,6 +233,7 @@ namespace PayloadInstaller
         // Install drivers and remove previous installation
         static int Install()
         {
+            UninstallLegacy();
             Uninstall();
 
             try
@@ -240,6 +280,15 @@ namespace PayloadInstaller
 
         static int Main(string[] args)
         {
+            // Print banner
+            Console.WriteLine("================================================");
+            Console.WriteLine(" __PRODUCT_NAME__");
+            Console.WriteLine(" Version#: __VERSION__");
+            Console.WriteLine(" Built on: __BUILD_TIME__");
+            Console.WriteLine(" __COPYRIGHT__");
+            Console.WriteLine("================================================");
+            Console.WriteLine();
+
             // Parse arguments
             string mode = "install"; // default (no args)
             if (args.Length > 0)
@@ -289,7 +338,12 @@ $outputExe = Join-Path $Script:OutputRoot $OutputName
 
 # Write C# source to a temp file in the system temp directory
 $sourceFile = [System.IO.Path]::ChangeExtension([System.IO.Path]::GetTempFileName(), '.cs')
-$csharpSource = $csharpSource.Replace("__VERSION__", $Version)
+$buildTime    = (Get-Date).ToUniversalTime().ToString("yyyy-MM-dd HH:mm UTC")
+$csharpSource = $csharpSource.Replace("__VERSION__",      $Version)
+$csharpSource = $csharpSource.Replace("__PRODUCT_NAME__", $ProductName)
+$csharpSource = $csharpSource.Replace("__COMPANY_NAME__", $CompanyName)
+$csharpSource = $csharpSource.Replace("__COPYRIGHT__",    $Copyright)
+$csharpSource = $csharpSource.Replace("__BUILD_TIME__",   $buildTime)
 $csharpSource = $csharpSource.Replace("__PAYLOAD_NAME__", $Script:PayloadName)
 Set-Content -Path $sourceFile -Value $csharpSource -Encoding UTF8
 
