@@ -13,7 +13,7 @@ KDIR := /lib/modules/$(shell uname -r)/build
 KHEADERS := /usr/src/linux-headers-$(shell uname -r)
 QCOM_USB_OUTPUTDIR=/lib/modules/$(shell uname -r)/kernel/drivers/usb/misc
 QCOM_NET_OUTPUTDIR=/lib/modules/$(shell uname -r)/kernel/drivers/net/usb
-OUTPUTDIR_MDM=/lib/modules/$(shell uname -r)/kernel/drivers/usb/serial/
+OUTPUTDIR_MDM=/lib/modules/$(shell uname -r)/kernel/drivers/usb/serial
 SECUREBOOT := $(shell mokutil --sb-state)
 DEST_SIGN_PATH=/opt/qcom/QUD/sign
 
@@ -35,20 +35,20 @@ install: build
 	rm -rf $(QCOM_NET_OUTPUTDIR)/qcom_usbnet.ko
 	rm -rf $(OUTPUTDIR_MDM)/qcom_serial.ko
 	cp -rf ./InfParser/qtiDevInf.ko $(QCOM_USB_OUTPUTDIR)
-	cp -rf ./qcom_usb/qcom_usb.ko $(QCOM_USB_OUTPUTDIR)
+	cp -rf ./qcom_usb/qcom_usb.ko $(QCOM_USB_OUTPUTDIR) 
 	cp -rf ./qcom_usbnet/qcom_usbnet.ko $(QCOM_NET_OUTPUTDIR)
-	cp -rf ./qcom_serial/qcom_serial.ko $(OUTPUTDIR_MDM)
+	#cp -rf ./qcom_serial/qcom_serial.ko $(OUTPUTDIR_MDM)
 	depmod
 # 	modprobe qcom_serial
 	modprobe qtiDevInf
-	modprobe qcom_usb
-	modprobe qcom_usbnet debug_g=1 debug_aggr=0
+	modprobe qcom_usb gQdssInfFilePath="$(PWD)/qcom_usb/qdbusb.inf" gDiagInfFilePath="$(PWD)/qcom_usb/qtiser.inf" gModemInfFilePath="$(PWD)/qcom_serial/qtimdm.inf"
+	modprobe qcom_usbnet debug_g=1 debug_aggr=0 gQTIRmnetInfFilePath="$(PWD)/qcom_usbnet/qtiwwan.inf"
 
 uninstall: clean
-	rmmod qtiDevInf
 	rmmod qcom_usb
 	rmmod qcom_usbnet
-	rmmod qcom_serial
+	#rmmod qcom_serial
+	rmmod qtiDevInf
 	rm -rf $(QCOM_USB_OUTPUTDIR)/qtiDevInf.ko
 	rm -rf $(QCOM_USB_OUTPUTDIR)/qcom_usb.ko
 	rm -rf $(QCOM_NET_OUTPUTDIR)/qcom_usbnet.ko
