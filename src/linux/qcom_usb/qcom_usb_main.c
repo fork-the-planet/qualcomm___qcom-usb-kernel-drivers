@@ -4014,20 +4014,20 @@ static int QTIDevUSBModInit(void)
 
     if (UpdateDeviceInfo(&gQdssFileInfo, gQdssInfFilePath) < 0)
     {
-        QC_LOG_GLOBAL("Error in parsing INF file\n");
+        QC_LOG_GLOBAL("Error in parsing QdssInfFilePath INF file\n");
         return -ENXIO;
     }
 
     if (UpdateDeviceInfo(&gModemFileInfo, gModemInfFilePath) < 0)
     {
-        QC_LOG_GLOBAL("Error in parsing INF file\n");
+        QC_LOG_GLOBAL("Error in parsing ModemInfFilePath INF file\n");
         return -ENXIO;
     }
 
 #ifdef QDSS_DIAG_MERGE
     if (UpdateDeviceInfo(&gDiagFileInfo, gDiagInfFilePath) < 0)
     {
-        QC_LOG_GLOBAL("Error in parsing INF file\n");
+        QC_LOG_GLOBAL("Error in parsing DiagInfFilePath INF file\n");
         qti_kfree(gQdssFileInfo);
         return -ENXIO;
     }
@@ -4144,3 +4144,6 @@ MODULE_PARM_DESC(gQdssInfFilePath, "Inf File location (Need complete path)");
 
 module_param(gDiagInfFilePath, charp, S_IRUGO | S_IWUSR );
 MODULE_PARM_DESC(gDiagInfFilePath, "Inf File location (Need complete path)");
+
+module_param(gModemInfFilePath, charp, S_IRUGO | S_IWUSR );
+MODULE_PARM_DESC(gModemInfFilePath, "Inf File location (Need complete path)");
