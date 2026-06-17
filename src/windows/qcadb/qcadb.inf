@@ -13,7 +13,7 @@ Class       = AndroidUsbDeviceClass
 ClassGUID   = {3F966BD9-FA04-4ec5-991C-D326973B5128}
 Provider    = %QCOM%
 CatalogFile = qcadb.cat
-DriverVer   = 04/20/2026,1.0.0.0
+DriverVer   = 06/15/2026,1.0.0.0
 PnpLockdown = 1
 
 [Manufacturer]
@@ -26,9 +26,7 @@ PnpLockdown = 1
 %SingleAdbInterface4E11%      = USB_Install, USB\VID_18D1&PID_4E11
 %CompositeAdbInterface4E1201% = USB_Install, USB\VID_18D1&PID_4E12&MI_01
 %CompositeAdbInterface4E2201% = USB_Install, USB\VID_18D1&PID_4E22&MI_01
-%CompositeAdbInterfaceD002%   = USB_Install, USB\VID_18D1&PID_D002
 ;
-
 %QcAdbInterface2E7601% = USB_Install, USB\VID_22B8&PID_2E76&MI_01
 
 ;Qualcomm Devices
@@ -122,10 +120,7 @@ PnpLockdown = 1
 %SingleAdbInterface4E11%      = USB_Install, USB\VID_18D1&PID_4E11
 %CompositeAdbInterface4E1201% = USB_Install, USB\VID_18D1&PID_4E12&MI_01
 %CompositeAdbInterface4E2201% = USB_Install, USB\VID_18D1&PID_4E22&MI_01
-%CompositeAdbInterfaceD002%   = USB_Install, USB\VID_18D1&PID_D002
-
 ;
-
 %QcAdbInterface2E7601% = USB_Install, USB\VID_22B8&PID_2E76&MI_01
 
 ;Qualcomm Devices
@@ -219,9 +214,7 @@ PnpLockdown = 1
 %SingleAdbInterface4E11%      = USB_Install, USB\VID_18D1&PID_4E11
 %CompositeAdbInterface4E1201% = USB_Install, USB\VID_18D1&PID_4E12&MI_01
 %CompositeAdbInterface4E2201% = USB_Install, USB\VID_18D1&PID_4E22&MI_01
-%CompositeAdbInterfaceD002%   = USB_Install, USB\VID_18D1&PID_D002
 ;
-
 %QcAdbInterface2E7601% = USB_Install, USB\VID_22B8&PID_2E76&MI_01
 
 ;Qualcomm Devices
@@ -346,7 +339,6 @@ SingleBootLoaderInterfaceD00D = "Android Bootloader Interface D00D"
 CompositeAdbInterface0D0201 = "Android Composite ADB Interface 0D02"
 CompositeAdbInterface4E1201 = "Android Composite ADB Interface 4E12"
 CompositeAdbInterface4E2201 = "Android Composite ADB Interface 4E22"
-CompositeAdbInterfaceD002 = "Android Composite ADB Interface D002"
 
 QcAdbInterface2E7601 = "MOT ADB Interface 2E76"
 QcAdbInterface676501 = "Qualcomm ADB Interface 6765"

@@ -12,7 +12,7 @@ Signature   = "$WINDOWS NT$"
 Class       = Ports
 Provider    = %QCOM%
 ClassGuid   = {4D36E978-E325-11CE-BFC1-08002BE10318}
-DriverVer   = 03/25/2026,1.0.0.0
+DriverVer   = 06/15/2026,1.0.0.0
 Catalogfile = qcwdfserial.cat
 PnpLockdown = 1
 
@@ -1515,10 +1515,6 @@ AddReg = All00, AddReg, DevFunction3
 CopyFiles=QCUsbDriverFiles
 AddReg = All00, AddReg, DevFunction4
 
-[QportInstall05.NT]
-CopyFiles=QCUsbDriverFiles
-AddReg = All00, AddReg
-
 [QCUsbDriverFiles]
 qcwdfserial.sys
 
@@ -1540,9 +1536,6 @@ AddReg = DfxAddReg
 [QportInstall04.NT.HW]
 AddReg = DfxAddReg
 
-[QportInstall05.NT.HW]
-AddReg = DfxAddReg
-
 [QportInstall00.NT.Services]
 AddService=qcwdfserial,  0x00000002, QC_USBSerialService
 
@@ -1558,18 +1551,7 @@ AddService=qcwdfserial,  0x00000002, QC_USBSerialService
 [QportInstall04.NT.Services]
 AddService=qcwdfserial,  0x00000002, QC_USBSerialService
 
-[QportInstall05.NT.Services]
-AddService=qcwdfserial,  0x00000002, QC_USBSerialService05
-
 [QC_USBSerialService]
-DisplayName   = %qcwdfserService%
-ServiceType   = 1
-StartType     = 3
-ErrorControl  = 1
-ServiceBinary = %12%\qcwdfserial.sys
-AddReg        = RegEntries
-
-[QC_USBSerialService05]
 DisplayName   = %qcwdfserService%
 ServiceType   = 1
 StartType     = 3
